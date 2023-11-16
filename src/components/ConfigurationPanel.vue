@@ -2,18 +2,21 @@
   <div>
     <v-container fluid>
       <v-row>
-        <v-col cols="12" md="2">
+        <v-col cols="12" md="3">
+          <RankingPanel @ranking-complete="updateRankedStocks"/>
+        </v-col>
+        <v-col cols="12" md="6">
+          <h1>Ranked Stocks</h1>
+          <p>Here the ranked stocks are displayed alongside their average score and average financial metrics over all time</p>
+          <StockTable :data="rankedStocks"/>
+        </v-col>
+        <v-col cols="12" md="3">
           <v-select
               v-model="selectedAttribute"
               :items="columnNames"
               label="Select a metric to plot over time"
           ></v-select>
-        </v-col>
-        <v-col cols="12" md="5">
           <StockChart :selected-attribute="selectedAttribute" />
-        </v-col>
-        <v-col cols="12" md="5">
-          <StockTable/>
         </v-col>
       </v-row>
     </v-container>
@@ -23,13 +26,15 @@
 <script>
 import StockChart from "@/components/StockChart.vue";
 import StockTable from "@/components/StockTable.vue";
+import RankingPanel from "@/components/RankingPanel.vue";
 
 export default {
-  components: { StockChart, StockTable },
+  components: { StockChart, StockTable, RankingPanel },
   data() {
     return {
       columnNames: [],
-      selectedAttribute: 'price'
+      selectedAttribute: 'price',
+      rankedStocks: []
     };
   },
   mounted() {
@@ -45,6 +50,10 @@ export default {
           .catch(error => {
             console.error('Error fetching data:', error);
           });
+    },
+
+    updateRankedStocks(response) {
+      this.rankedStocks = JSON.parse(response.rankedStocks);
     }
   }
 }
