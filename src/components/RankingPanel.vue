@@ -65,7 +65,7 @@ export default {
     rankStocks() {
       const selectedFeatures = this.features
           .filter(feature => this.featureStates[feature])
-          .map(feature => ({ feature, weight: this.featureValues[feature] }));
+          .map(feature => ({ feature, weight: this.featureValues[feature] || 0 }));
 
       // Mock API call - replace with your actual API endpoint and logic
       fetch('http://127.0.0.1:5000/rank-stocks', {
