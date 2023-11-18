@@ -8,7 +8,13 @@ import Plotly from 'plotly.js/dist/plotly';
 export default {
   name: 'StockChart',
   props: {
-    selectedAttribute: String
+    selectedAttribute: String,
+    selectedStocks: Array
+  },
+  data() {
+    return{
+      stocks: null
+    }
   },
   mounted() {
     this.fetchStockData();
@@ -16,8 +22,11 @@ export default {
   watch: {
     selectedAttribute(newVal, oldVal) {
       if (newVal !== oldVal) {
-        this.fetchStockData(); // Re-fetch data when selected attribute changes
+        this.plotStockData(this.stocks);
       }
+    },
+    selectedStocks() {
+      this.plotStockData(this.stocks);
     }
   },
   methods: {
@@ -26,6 +35,7 @@ export default {
           .then(response => response.json())
           .then(data => {
             this.plotStockData(data);
+            this.stocks = data
           })
           .catch(error => {
             console.error('Error fetching stock data:', error);
@@ -33,15 +43,17 @@ export default {
     },
 
     plotStockData(stockData) {
-      // Group data by symbol
       const groupedData = {};
       stockData.forEach(item => {
-        if (!groupedData[item.symbol]) {
-          groupedData[item.symbol] = { dates: [], metrics: [] };
+        // Check if the current stock is selected
+        if (this.selectedStocks.includes(item.symbol)) {
+          if (!groupedData[item.symbol]) {
+            groupedData[item.symbol] = { dates: [], metrics: [] };
+          }
+          groupedData[item.symbol].dates.push(item.date);
+          const metricValue = item[this.selectedAttribute];
+          groupedData[item.symbol].metrics.push(metricValue);
         }
-        groupedData[item.symbol].dates.push(item.date);
-        const metricValue = item[this.selectedAttribute]
-        groupedData[item.symbol].metrics.push(metricValue);
       });
 
       // Sort data points by date for each symbol and prepare traces

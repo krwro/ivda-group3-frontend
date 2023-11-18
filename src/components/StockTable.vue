@@ -1,46 +1,78 @@
 <template>
-  <div id="stockTable"></div>
+  <div class="scrollable-table-container">
+    <table>
+      <thead>
+      <tr>
+        <th></th>
+        <th v-for="key in stockDataKeys" :key="key">{{ key }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="(stock, index) in data" :key="index">
+        <td>
+          <input type="checkbox" :value="stock.symbol" v-model="selectedStocks">
+        </td>
+        <td v-for="(value, key) in stock" :key="key">{{ value }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
-import Plotly from 'plotly.js/dist/plotly';
-
 export default {
   props: {
     data: Array
   },
-  watch: {
-    data: {
-      immediate: true,
-      handler(newData) {
-        this.plotTable(newData);
-      }
+  data() {
+    return {
+      selectedStocks: []
+    };
+  },
+  computed: {
+    stockDataKeys() {
+      return this.data.length > 0 ? Object.keys(this.data[0]) : [];
     }
   },
-  methods: {
-    plotTable(stockData) {
-      if (!stockData || stockData.length === 0) return;
-
-      const tableData = [{
-        type: 'table',
-        header: {
-          values: Object.keys(stockData[0]).map(key => [key]),
-          align: "center",
-          line: { width: 1, color: 'black' },
-          fill: { color: "grey" },
-          font: { family: "Arial", size: 12, color: "white" }
-        },
-        cells: {
-          values: Object.keys(stockData[0]).map(key => stockData.map(row => row[key])),
-          align: "center",
-          line: { color: "black", width: 1 },
-          fill: { color: ["white"] },
-          font: { family: "Arial", size: 11, color: ["black"] }
-        }
-      }];
-
-      Plotly.newPlot('stockTable', tableData);
+  watch: {
+    selectedStocks: {
+      handler(newVal) {
+        console.log("hello")
+        console.log(newVal)
+        this.$emit('update-selected-stocks', newVal);
+      },
+      deep: true
     }
   }
 };
 </script>
+
+<style scoped>
+.scrollable-table-container {
+  max-height: 440px;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+thead {
+  background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tr:hover {
+  background-color: #eaeaea;
+}
+</style>
