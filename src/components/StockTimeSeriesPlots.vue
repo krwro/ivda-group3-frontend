@@ -38,7 +38,7 @@ export default {
     async fetchMetrics() {
       const response = await fetch('http://127.0.0.1:5000/stock-features');
       const data = await response.json();
-      this.metrics = data.features; // Assuming the API returns an array of metric names
+      this.metrics = data.features;
     },
 
     async fetchAndGroupStockData() {

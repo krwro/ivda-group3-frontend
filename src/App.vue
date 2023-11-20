@@ -19,7 +19,7 @@ html::-webkit-scrollbar {
 
 
 <script>
-import ConfigurationPanel from './components/ConfigurationPanel.vue'
+import ConfigurationPanel from './components/StockAnalysisDashboard.vue'
 
 export default {
   name: 'App',
