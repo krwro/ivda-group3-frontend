@@ -1,6 +1,6 @@
 <template>
   <div class="multi-metric-container">
-    <div v-for="metric in metrics" :key="metric" class="metric-chart">
+    <div v-for="metric in selectedFeatures" :key="metric" class="metric-chart">
       <div :id="`chart-${metric}`"></div>
     </div>
   </div>
@@ -11,45 +11,57 @@ import Plotly from 'plotly.js/dist/plotly';
 
 export default {
   props: {
-    selectedStocks: Array
+    selectedStocks: Array,
+    selectedFeatures: Array,
+    dateRange: Array
   },
   data() {
     return {
-      metrics: [],
+      rawStocksData: null,
       groupedStockData: {}
     };
   },
-  mounted() {
-    this.initComponent();
-  },
   watch: {
-    selectedStocks: 'plotAllMetrics'
-  },
-  methods: {
-    async initComponent() {
-      try {
-        await this.fetchMetrics();
-        await this.fetchAndGroupStockData();
-      } catch (error) {
-        console.error('Initialization Error:', error);
+    selectedStocks(newVal) {
+      if (newVal && newVal.length > 0) {
+        this.processData();
       }
     },
-
-    async fetchMetrics() {
-      const response = await fetch('http://127.0.0.1:5000/stock-features');
-      const data = await response.json();
-      this.metrics = data.features;
+    dateRange() {
+      this.processData();
     },
-
-    async fetchAndGroupStockData() {
+    selectedFeatures() {
+      this.processData();
+    },
+  },
+  mounted() {
+    this.fetchStockData();
+  },
+  methods: {
+    async fetchStockData() {
       const response = await fetch('http://127.0.0.1:5000/stocks');
-      const stockData = await response.json();
-      this.groupStockData(stockData);
+      this.rawStocksData = await response.json();
+      this.processData();
+    },
+    processData() {
+      if (!this.rawStocksData || this.selectedStocks.length === 0) {
+        return;
+      }
+
+      let filteredData = this.rawStocksData.filter(item => {
+        const itemDate = new Date(item.date);
+        const startDate = new Date(`${this.dateRange[0] || 2010}-01-01`);
+        const endDate = new Date(`${this.dateRange[1] || 2023}-12-31`);
+        return itemDate >= startDate && itemDate <= endDate;
+      });
+
+      this.groupStockData(filteredData);
+      this.plotAllMetrics();
     },
 
-    groupStockData(stockData) {
-      this.groupedStockData = stockData.reduce((acc, item) => {
-        this.metrics.forEach(metric => {
+    groupStockData(filteredData) {
+      this.groupedStockData = filteredData.reduce((acc, item) => {
+        this.selectedFeatures.forEach(metric => {
           acc[item.symbol] = acc[item.symbol] || {};
           acc[item.symbol][metric] = acc[item.symbol][metric] || {dates: [], metrics: []};
           acc[item.symbol][metric].dates.push(item.date);
@@ -60,7 +72,10 @@ export default {
     },
 
     plotAllMetrics() {
-      this.metrics.forEach(metric => {
+      if (this.selectedStocks.length === 0) {
+        return;
+      }
+      this.selectedFeatures.forEach(metric => {
         const filteredData = this.filterStockDataBySelected(metric);
         this.createPlot(metric, filteredData);
       });
@@ -76,9 +91,16 @@ export default {
     },
 
     createPlot(metric, filteredData) {
-      const traces = this.createTraces(filteredData);
-      const layout = this.createLayout(metric);
-      Plotly.newPlot(`chart-${metric}`, traces, layout);
+      this.$nextTick(() => {
+        const elementId = `chart-${metric}`;
+        if (document.getElementById(elementId)) {
+          const traces = this.createTraces(filteredData);
+          const layout = this.createLayout(metric);
+          Plotly.newPlot(elementId, traces, layout);
+        } else {
+          console.warn(`Element with ID ${elementId} not found.`);
+        }
+      });
     },
 
     createTraces(filteredData) {
@@ -116,7 +138,7 @@ export default {
 .multi-metric-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-gap: 16px;
+  grid-gap: 8px;
 }
 
 .metric-chart {

@@ -3,7 +3,7 @@
     <v-container fluid="true">
       <v-row>
         <v-col cols="12" md="3">
-          <RankingPanel @ranking-complete="updateRankedStocks"/>
+          <RankingPanel @ranking-complete="updateRankedStocks" @date-range-updated="updateDateRange" @selected-features="updateSelectedFeatures"/>
         </v-col>
         <v-col cols="12" md="4">
           <h1>Ranked Stocks</h1>
@@ -16,9 +16,10 @@
               v-model="selectedAttribute"
               :items="columnNames"
               label="Select a metric to plot over time"
+              v-if="showChart"
           ></v-select>
-          <StockChart :selected-attribute="selectedAttribute" :selected-stocks="selectedStocks" />
-          <StockTimeSeriesPlots :selectedStocks="selectedStocks" />
+          <StockChart :selected-attribute="selectedAttribute" :selected-stocks="selectedStocks"  v-if="showChart"/>
+          <StockTimeSeriesPlots :selectedStocks="selectedStocks" :date-range="dateRange" :selectedFeatures="selectedFeatures"/>
         </v-col>
       </v-row>
     </v-container>
@@ -39,7 +40,10 @@ export default {
       columnNames: [],
       selectedAttribute: 'price',
       rankedStocks: [],
-      selectedStocks: []
+      selectedStocks: [],
+      dateRange: [],
+      showChart: false,
+      selectedFeatures: []
     };
   },
   mounted() {
@@ -61,9 +65,16 @@ export default {
       this.rankedStocks = JSON.parse(response.rankedStocks);
     },
 
+  updateSelectedFeatures(features) {
+    this.selectedFeatures = features;
+  },
+
     updateSelectedStocks(selectedStocks) {
-      console.log(selectedStocks)
       this.selectedStocks = selectedStocks;
+    },
+
+    updateDateRange(newRange) {
+      this.dateRange = newRange;
     }
   }
 }
