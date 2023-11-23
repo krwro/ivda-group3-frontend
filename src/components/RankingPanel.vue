@@ -13,6 +13,20 @@
           thumb-label="always"
           @end="emitDateRange"
       ></v-range-slider>
+        <v-select
+            v-model="decayFunction"
+            :items="decayFunctions"
+            label="Decay Function Type"
+        ></v-select>
+        <v-slider
+            v-model="decayRate"
+            :max="100"
+            :min="0"
+            :step="1"
+            label="Decay Rate"
+            thumb-label="always"
+            tick-size="4"
+        ></v-slider>
       <div v-for="feature in features" :key="feature">
         <v-row>
           <v-checkbox v-model="featureStates[feature]" :label="feature"></v-checkbox>
@@ -54,6 +68,13 @@ export default {
         75: '',
         100: 'Very Important',
       },
+      decayRate: 0,
+      decayFunction: 'linear',
+      decayFunctions: [
+        { title: 'Linear', value: 'linear' },
+        { title: 'Exponential', value: 'exponential' },
+        { title: 'Logarithmic', value: 'logarithmic' },
+      ],
     };
   },
   mounted() {
@@ -115,7 +136,9 @@ export default {
         body: JSON.stringify({
           selectedFeatures,
           startDate,
-          endDate
+          endDate,
+          decayRate: this.decayRate,
+          decayFunction: this.decayFunction
         })
       })
           .then(response => response.json())
@@ -128,7 +151,7 @@ export default {
       this.$emit('selected-features', selectedFeatures.map(f => f.feature));
     }
   }
-};
+}
 </script>
 
 <style scoped>
