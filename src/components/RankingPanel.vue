@@ -11,7 +11,7 @@
           :step="1"
           label="Year"
           thumb-label="always"
-          @end="emitDateRange, rankStocks"
+          @end="emitDateRange"
       ></v-range-slider>
         <v-select
             v-model="decayFunction"
@@ -47,9 +47,6 @@
         ></v-slider>
       </div>
     </div>
-    <!-- <v-btn class="rank-stocks-button" @click="rankStocks">
-      RANK STOCKS
-    </v-btn> -->
   </div>
 </template>
 
@@ -122,6 +119,7 @@ export default {
       });
     },
     emitDateRange() {
+      this.rankStocks()
       this.$emit('date-range-updated', this.dateRange);
     },
     rankStocks() {
@@ -169,20 +167,11 @@ export default {
 }
 
 .scrollable-section {
-  height: 72vh;
+  height: 78vh;
   overflow-y: auto;
   flex-grow: 1;
   margin-top: 20px;
   padding: 40px 20px 20px;
 }
 
-.rank-stocks-button {
-  background-color: #4CAF50;
-  color: white;
-  margin-top: 20px;
-}
-
-.rank-stocks-button:hover {
-  background-color: #388E3C;
-}
 </style>
