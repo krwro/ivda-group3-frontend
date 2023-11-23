@@ -1,5 +1,5 @@
 <template>
-  <div class="multi-metric-container">
+  <div class="multi-metric-container" v-if="selectedStocks.length > 0">
     <div v-for="metric in selectedFeatures" :key="metric" class="metric-chart">
       <div :id="`chart-${metric}`"></div>
     </div>
@@ -97,9 +97,43 @@ export default {
           const traces = this.createTraces(filteredData);
           const layout = this.createLayout(metric);
           Plotly.newPlot(elementId, traces, layout);
+
+          document.getElementById(elementId).on('plotly_relayout', (eventData) => {
+            this.onPlotInteraction(metric, eventData);
+          });
+
+          document.getElementById(elementId).on('plotly_doubleclick', () => {
+            this.onPlotReset();
+          });
+
         } else {
           console.warn(`Element with ID ${elementId} not found.`);
         }
+      });
+    },
+
+    onPlotInteraction(changedMetric, eventData) {
+      if (!eventData['xaxis.range[0]'] || !eventData['xaxis.range[1]']) {
+        return;
+      }
+
+      this.selectedFeatures.forEach(metric => {
+        if (metric !== changedMetric) {
+          const elementId = `chart-${metric}`;
+          Plotly.relayout(elementId, {
+            'xaxis.range': [eventData['xaxis.range[0]'], eventData['xaxis.range[1]']]
+          });
+        }
+      });
+      },
+
+    onPlotReset() {
+      this.selectedFeatures.forEach(metric => {
+        const elementId = `chart-${metric}`;
+        Plotly.relayout(elementId, {
+          'xaxis.autorange': true,
+          'yaxis.autorange': true
+        });
       });
     },
 
@@ -138,7 +172,8 @@ export default {
 .multi-metric-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-gap: 8px;
+  height: 45vh;
+  overflow-y: auto;
 }
 
 .metric-chart {

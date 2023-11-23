@@ -7,9 +7,8 @@
         </v-col>
         <v-col cols="12" md="4">
           <h1>Ranked Stocks</h1>
-          <p>Here the ranked stocks are displayed alongside their average score and average financial metrics over all time</p>
+          <p>Here the ranked stocks are displayed alongside their average score and average financial metrics over the selected timeframe</p>
           <StockTable :data="rankedStocks" @update-selected-stocks="updateSelectedStocks"/>
-          <ScatterMatrix :rankingData="rankedStocks" :selectedStocks="selectedStocks"></ScatterMatrix>
         </v-col>
         <v-col cols="12" md="5">
           <v-select
@@ -18,6 +17,7 @@
               label="Select a metric to plot over time"
               v-if="showChart"
           ></v-select>
+          <ScatterMatrix :rankingData="rankedStocks" :selectedStocks="selectedStocks"></ScatterMatrix>
           <StockChart :selected-attribute="selectedAttribute" :selected-stocks="selectedStocks"  v-if="showChart"/>
           <StockTimeSeriesPlots :selectedStocks="selectedStocks" :date-range="dateRange" :selectedFeatures="selectedFeatures"/>
         </v-col>

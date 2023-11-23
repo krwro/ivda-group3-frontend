@@ -1,33 +1,36 @@
 <template>
-  <div>
+  <div class="feature-ranking-panel">
     <h1>Feature Ranking Panel</h1>
-    <p>First choose the features you want to include in your Ranking. Then choose their ranking weights based on their importance</p>
-    <v-range-slider
-        v-model="dateRange"
-        :min="minDate"
-        :max="maxDate"
-        :step="1"
-        thumb-label="always"
-        label="Year"
-        @end="emitDateRange"
-    ></v-range-slider>
-    <div v-for="feature in features" :key="feature">
-      <v-row>
-        <v-checkbox v-model="featureStates[feature]" :label="feature"></v-checkbox>
-      </v-row>
-      <v-slider
-          v-if="featureStates[feature]"
-          v-model="featureValues[feature]"
-          show-ticks="always"
-          :max="100"
-          :step="25"
-          :ticks="tickLabels"
-          tick-size="4"
-          :tick-labels="tickLabels"
+    <p>First choose the features you want to include in your Ranking. Then choose their ranking weights based on their
+      importance</p>
+    <div class="scrollable-section">
+      <v-range-slider
+          v-model="dateRange"
+          :max="maxDate"
+          :min="minDate"
+          :step="1"
+          label="Year"
           thumb-label="always"
-      ></v-slider>
+          @end="emitDateRange"
+      ></v-range-slider>
+      <div v-for="feature in features" :key="feature">
+        <v-row>
+          <v-checkbox v-model="featureStates[feature]" :label="feature"></v-checkbox>
+        </v-row>
+        <v-slider
+            v-if="featureStates[feature]"
+            v-model="featureValues[feature]"
+            :max="100"
+            :step="25"
+            :tick-labels="tickLabels"
+            :ticks="tickLabels"
+            show-ticks="always"
+            thumb-label="always"
+            tick-size="4"
+        ></v-slider>
+      </div>
     </div>
-    <v-btn @click="rankStocks">
+    <v-btn class="rank-stocks-button" @click="rankStocks">
       RANK STOCKS
     </v-btn>
   </div>
@@ -99,7 +102,7 @@ export default {
     rankStocks() {
       const selectedFeatures = this.features
           .filter(feature => this.featureStates[feature])
-          .map(feature => ({ feature, weight: this.featureValues[feature] || 0 }));
+          .map(feature => ({feature, weight: this.featureValues[feature] || 0}));
 
       const startDate = `${this.dateRange[0]}-01-01`;
       const endDate = `${this.dateRange[1]}-12-31`;
@@ -124,6 +127,35 @@ export default {
           });
       this.$emit('selected-features', selectedFeatures.map(f => f.feature));
     }
-    }
+  }
 };
 </script>
+
+<style scoped>
+.feature-ranking-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #f4f4f4;
+}
+
+.scrollable-section {
+  height: 72vh;
+  overflow-y: auto;
+  flex-grow: 1;
+  margin-top: 20px;
+  padding: 40px 20px 20px;
+}
+
+.rank-stocks-button {
+  background-color: #4CAF50;
+  color: white;
+  margin-top: 20px;
+}
+
+.rank-stocks-button:hover {
+  background-color: #388E3C;
+}
+</style>

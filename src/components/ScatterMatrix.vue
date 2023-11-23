@@ -24,7 +24,7 @@ export default {
 
     plotScatterMatrix() {
       const traces = this.createTraces();
-      const layout = { title: 'Scatter Matrix of Average Metrics' };
+      const layout = {title: 'Scatter Matrix of Average Metrics'};
       Plotly.newPlot('scatterMatrix', traces, layout);
     },
 
@@ -52,10 +52,13 @@ export default {
 
     createTrace(data, color) {
       const dimensions = this.createDimensions(data);
+      const hoverText = data.map(row => `Symbol: ${row.symbol}`);
       return {
         type: 'splom',
         dimensions: dimensions,
-        marker: { size: 5, color },
+        marker: {size: 5, color},
+        text: hoverText,
+        hoverinfo: 'text',
         showlegend: false
       };
     },
@@ -64,7 +67,7 @@ export default {
       const unwantedKeys = ['rank', 'symbol', 'score'];
       return Object.keys(data[0])
           .filter(key => !unwantedKeys.includes(key))
-          .map(key => ({ label: key, values: data.map(row => row[key]) }));
+          .map(key => ({label: key, values: data.map(row => row[key])}));
     }
   }
 }
