@@ -17,9 +17,10 @@
             v-model="decayFunction"
             :items="decayFunctions"
             label="Decay Function Type"
-            @change="rankStocks"
+            @update:modelValue="rankStocks"
         ></v-select>
         <v-slider
+            v-if="decayFunction !== 'none'"
             v-model="decayRate"
             :max="100"
             :min="0"
@@ -69,8 +70,9 @@ export default {
         100: 'Very Important',
       },
       decayRate: 0,
-      decayFunction: 'linear',
+      decayFunction: 'none',
       decayFunctions: [
+        { title: 'None', value: 'none' },
         { title: 'Linear', value: 'linear' },
         { title: 'Exponential', value: 'exponential' },
         { title: 'Logarithmic', value: 'logarithmic' },
