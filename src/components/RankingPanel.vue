@@ -11,12 +11,13 @@
           :step="1"
           label="Year"
           thumb-label="always"
-          @end="emitDateRange"
+          @end="emitDateRange, rankStocks"
       ></v-range-slider>
         <v-select
             v-model="decayFunction"
             :items="decayFunctions"
             label="Decay Function Type"
+            @change="rankStocks"
         ></v-select>
         <v-slider
             v-model="decayRate"
@@ -26,10 +27,11 @@
             label="Decay Rate"
             thumb-label="always"
             tick-size="4"
+            @end="rankStocks"
         ></v-slider>
       <div v-for="feature in features" :key="feature">
         <v-row>
-          <v-checkbox v-model="featureStates[feature]" :label="feature"></v-checkbox>
+          <v-checkbox v-model="featureStates[feature]" :label="feature" @change="rankStocks"></v-checkbox>
         </v-row>
         <v-slider
             v-if="featureStates[feature]"
@@ -41,12 +43,13 @@
             show-ticks="always"
             thumb-label="always"
             tick-size="4"
+            @end="rankStocks"
         ></v-slider>
       </div>
     </div>
-    <v-btn class="rank-stocks-button" @click="rankStocks">
+    <!-- <v-btn class="rank-stocks-button" @click="rankStocks">
       RANK STOCKS
-    </v-btn>
+    </v-btn> -->
   </div>
 </template>
 
@@ -55,12 +58,12 @@
 export default {
   data() {
     return {
-      dateRange: [],
+      dateRange: [2010, 2022],
       minDate: null,
       maxDate: null,
-      features: [],
-      featureStates: {},
-      featureValues: {},
+      features: ['price', 'revenue'],
+      featureStates: {'price':true, 'revenue':true},
+      featureValues: {'price':50, 'revenue':100},
       tickLabels: {
         0: 'Not Important',
         25: '',
@@ -80,6 +83,7 @@ export default {
   mounted() {
     this.fetchFeatures();
     this.fetchDateRange();
+    this.rankStocks();
   },
   watch: {
     featureStates: {
