@@ -1,4 +1,5 @@
 <template>
+  <v-btn v-if="checkedStocks.length > 0" class="reset-selection-button" @click="resetSelection">Reset Selection</v-btn>
   <!-- Selected Stocks Table -->
   <div class="scrollable-table-container" v-if="selectedStocks.length > 0">
     <table>
@@ -91,6 +92,10 @@ export default {
     isNumeric(value) {
       return !isNaN(value) && isFinite(value);
     },
+  resetSelection() {
+    this.selectedStocks = []
+    this.checkedStocks = []
+  }
   }
 };
 </script>
@@ -98,6 +103,9 @@ export default {
 
 <style scoped>
 
+.reset-selection-button {
+  margin: 1vmin;
+}
 .scrollable-table-container {
   max-height: 40vh;
   overflow-y: auto;
