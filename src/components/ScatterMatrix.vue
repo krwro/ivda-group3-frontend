@@ -72,3 +72,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.scatterMatrix {
+  height: 45vh;
+}
+
+</style>

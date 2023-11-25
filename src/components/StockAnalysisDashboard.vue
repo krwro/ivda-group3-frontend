@@ -5,20 +5,13 @@
         <v-col cols="12" md="3">
           <RankingPanel @ranking-complete="updateRankedStocks" @date-range-updated="updateDateRange" @selected-features="updateSelectedFeatures"/>
         </v-col>
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="3">
           <h1>Ranked Stocks</h1>
           <p>Here the ranked stocks are displayed alongside their average score and average financial metrics over the selected timeframe</p>
           <StockTable :data="rankedStocks" @update-selected-stocks="updateSelectedStocks"/>
         </v-col>
-        <v-col cols="12" md="5">
-          <v-select
-              v-model="selectedAttribute"
-              :items="columnNames"
-              label="Select a metric to plot over time"
-              v-if="showChart"
-          ></v-select>
+        <v-col cols="12" md="6">
           <ScatterMatrix :rankingData="rankedStocks" :selectedStocks="selectedStocks"></ScatterMatrix>
-          <StockChart :selected-attribute="selectedAttribute" :selected-stocks="selectedStocks"  v-if="showChart"/>
           <StockTimeSeriesPlots :selectedStocks="selectedStocks" :date-range="dateRange" :selectedFeatures="selectedFeatures"/>
         </v-col>
       </v-row>
@@ -27,14 +20,13 @@
 </template>
 
 <script>
-import StockChart from "@/components/StockChart.vue";
 import StockTable from "@/components/StockTable.vue";
 import RankingPanel from "@/components/RankingPanel.vue";
 import StockTimeSeriesPlots from "@/components/StockTimeSeriesPlots.vue";
 import ScatterMatrix from "@/components/ScatterMatrix.vue";
 
 export default {
-  components: {ScatterMatrix, StockTimeSeriesPlots, StockChart, StockTable, RankingPanel },
+  components: {ScatterMatrix, StockTimeSeriesPlots, StockTable, RankingPanel },
   data() {
     return {
       columnNames: [],
@@ -42,7 +34,6 @@ export default {
       rankedStocks: [],
       selectedStocks: [],
       dateRange: [],
-      showChart: false,
       selectedFeatures: []
     };
   },
@@ -65,9 +56,9 @@ export default {
       this.rankedStocks = JSON.parse(response.rankedStocks);
     },
 
-  updateSelectedFeatures(features) {
-    this.selectedFeatures = features;
-  },
+    updateSelectedFeatures(features) {
+      this.selectedFeatures = features;
+    },
 
     updateSelectedStocks(selectedStocks) {
       this.selectedStocks = selectedStocks;

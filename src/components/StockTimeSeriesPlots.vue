@@ -1,4 +1,5 @@
 <template>
+  <div class="info-card" v-if="selectedStocks.length == 0">Select a Stock to see more data</div>
   <div class="multi-metric-container" v-if="selectedStocks.length > 0">
     <div v-for="metric in selectedFeatures" :key="metric" class="metric-chart">
       <div :id="`chart-${metric}`"></div>
@@ -169,6 +170,13 @@ export default {
 </script>
 
 <style scoped>
+.info-card{
+  text-align: center;
+  vertical-align: middle;
+  margin: 5vmin;
+  padding: 5vmin;
+}
+
 .multi-metric-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

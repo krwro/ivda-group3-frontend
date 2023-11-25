@@ -12,17 +12,16 @@
       <tr v-for="(stock, index) in selectedStocks" :key="index">
         <td>
           <input type="checkbox"
-                 :value="stock.symbol"
-                 v-model="checkedStocks"
-                 true-value="checked"
-                 false-value="unchecked">
+                :value="stock.symbol"
+                v-model="checkedStocks"
+                true-value="checked"
+                false-value="unchecked">
         </td>
         <td v-for="(value, key) in stock" :key="key">{{ isNumeric(value) ? roundToThreeDecimals(value) : value }}</td>
       </tr>
       </tbody>
     </table>
   </div>
-
   <!-- All Stocks Table -->
   <div class="scrollable-table-container">
     <table>
@@ -36,16 +35,17 @@
       <tr v-for="(stock, index) in filteredData" :key="index">
         <td>
           <input type="checkbox"
-                 :value="stock.symbol"
-                 v-model="checkedStocks"
-                 true-value="checked"
-                 false-value="unchecked">
+                :value="stock.symbol"
+                v-model="checkedStocks"
+                true-value="checked"
+                false-value="unchecked">
         </td>
         <td v-for="(value, key) in stock" :key="key">{{ isNumeric(value) ? roundToThreeDecimals(value) : value }}</td>
       </tr>
       </tbody>
     </table>
   </div>
+
 </template>
 
 <script>
@@ -97,8 +97,9 @@ export default {
 
 
 <style scoped>
+
 .scrollable-table-container {
-  max-height: 440px;
+  max-height: 40vh;
   overflow-y: auto;
 }
 

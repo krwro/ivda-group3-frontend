@@ -162,14 +162,13 @@ export default {
 .feature-ranking-panel {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 95vh;
   padding: 20px;
   box-sizing: border-box;
   background-color: #f4f4f4;
 }
 
 .scrollable-section {
-  height: 78vh;
   overflow-y: auto;
   flex-grow: 1;
   margin-top: 20px;
