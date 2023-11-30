@@ -1,6 +1,7 @@
 <template>
   <v-btn v-if="checkedStocks.length > 0" class="reset-selection-button" @click="resetSelection">Reset Selection</v-btn>
   <!-- Selected Stocks Table -->
+  <div class="combined-container">
   <div class="scrollable-table-container" v-if="selectedStocks.length > 0">
     <table>
       <thead>
@@ -45,8 +46,8 @@
       </tr>
       </tbody>
     </table>
+    </div>
   </div>
-
 </template>
 
 <script>
@@ -106,8 +107,14 @@ export default {
 .reset-selection-button {
   margin: 1vmin;
 }
+
+.combined-container {
+  max-height: 75vh;
+  overflow-y: hidden;
+}
+
 .scrollable-table-container {
-  max-height: 40vh;
+  max-height: 70vh;
   overflow-y: auto;
 }
 

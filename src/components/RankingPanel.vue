@@ -48,6 +48,17 @@
         ></v-slider>
       </div>
     </div>
+
+    <v-dialog v-model="isLoading" persistent="true" width="300">
+      <v-card class="loading-dialog">
+        <v-card-title class="headline">Loading...</v-card-title>
+        <v-card-text class="text-center">
+          <v-progress-circular indeterminate color="primary" size="70" width="7"></v-progress-circular>
+          <div class="loading-text">Please wait, ranking in progress.</div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
   </div>
 </template>
 
@@ -77,6 +88,7 @@ export default {
         { title: 'Exponential', value: 'exponential' },
         { title: 'Logarithmic', value: 'logarithmic' },
       ],
+      isLoading: false,
     };
   },
   mounted() {
@@ -125,6 +137,7 @@ export default {
       this.$emit('date-range-updated', this.dateRange);
     },
     rankStocks() {
+      this.isLoading = true;
       const selectedFeatures = this.features
           .filter(feature => this.featureStates[feature])
           .map(feature => ({feature, weight: this.featureValues[feature] || 0}));
@@ -148,6 +161,7 @@ export default {
           .then(response => response.json())
           .then(data => {
             this.$emit('ranking-complete', data);
+            this.isLoading = false;
           })
           .catch(error => {
             console.error('Error ranking stocks:', error);
@@ -173,6 +187,22 @@ export default {
   flex-grow: 1;
   margin-top: 20px;
   padding: 40px 20px 20px;
+}
+
+.loading-dialog {
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.loading-text {
+  margin-top: 20px;
+  font-size: 16px;
+  color: #555555;
+}
+
+.text-center {
+  text-align: center;
 }
 
 </style>
