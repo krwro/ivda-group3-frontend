@@ -19,7 +19,7 @@
                 true-value="checked"
                 false-value="unchecked">
         </td>
-        <td v-for="(value, key) in stock" :key="key">{{ isNumeric(value) ? roundToThreeDecimals(value) : value }}</td>
+        <td v-for="(value, key) in stock" :key="key">{{ isNumeric(value) ? formatNumber(value) : value }}</td>
       </tr>
       </tbody>
     </table>
@@ -42,7 +42,7 @@
                 true-value="checked"
                 false-value="unchecked">
         </td>
-        <td v-for="(value, key) in stock" :key="key">{{ isNumeric(value) ? roundToThreeDecimals(value) : value }}</td>
+        <td v-for="(value, key) in stock" :key="key">{{ isNumeric(value) ? formatNumber(value) : value }}</td>
       </tr>
       </tbody>
     </table>
@@ -87,16 +87,32 @@ export default {
     }
   },
   methods: {
+    formatNumber(num) {
+      num = this.roundToThreeDecimals(num)
+      return this.formatLargeNumber(num)
+    },
+
   roundToThreeDecimals(num) {
     return Math.round(num * 1000) / 1000;
   },
+
+    formatLargeNumber(num) {
+      if (num >= 1e9) {
+        return `${(num / 1e9).toFixed(3)}B`;
+      } else if (num >= 1e6) {
+        return `${(num / 1e6).toFixed(0)}Mio`;
+      }
+      return num;
+    },
+
     isNumeric(value) {
       return !isNaN(value) && isFinite(value);
     },
+
   resetSelection() {
     this.selectedStocks = []
     this.checkedStocks = []
-  }
+  },
   }
 };
 </script>
