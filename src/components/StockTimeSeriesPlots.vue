@@ -1,8 +1,8 @@
 <template>
-  <div class="info-card" v-if="selectedStocks.length == 0">Select a Stock to see more data</div>
+  <div class="info-card" v-if="selectedStocks.length === 0">Select a Stock to see more data</div>
   <div class="multi-metric-container" v-if="selectedStocks.length > 0">
     <div v-for="metric in selectedFeatures" :key="metric" class="metric-chart">
-      <div :id="`chart-${metric}`"></div>
+      <div id="multi-metric-subplot"></div>
     </div>
   </div>
 </template>
@@ -19,7 +19,8 @@ export default {
   data() {
     return {
       rawStocksData: null,
-      groupedStockData: {}
+      groupedStockData: {},
+      colorMapping: {}
     };
   },
   watch: {
@@ -76,9 +77,59 @@ export default {
       if (this.selectedStocks.length === 0) {
         return;
       }
-      this.selectedFeatures.forEach(metric => {
-        const filteredData = this.filterStockDataBySelected(metric);
-        this.createPlot(metric, filteredData);
+      this.assignColorsToSymbols()
+      const allFilteredData = this.selectedFeatures.map(metric => {
+        return {
+          metric: metric,
+          data: this.filterStockDataBySelected(metric)
+        };
+      });
+
+      this.createSubplots(allFilteredData);
+    },
+
+    createSubplots(allFilteredData) {
+      this.$nextTick(() => {
+        const subplotId = 'multi-metric-subplot';
+        if (document.getElementById(subplotId)) {
+          const subplotData = [];
+          const subplotLayout = {
+            grid: {rows: allFilteredData.length, columns: 1, pattern: 'independent'},
+            showlegend: true,
+            legend: { x: 1, y: 1 },
+            margin: { l: 56, r: 16, t: 16, b: 16 }
+          };
+
+          allFilteredData.forEach((filteredData, index) => {
+            const metricTraces = this.createTraces(filteredData.data, index === 0);
+            metricTraces.forEach(trace => {
+              trace.xaxis = `x${index + 1}`;
+              trace.yaxis = `y${index + 1}`;
+              subplotData.push(trace);
+            });
+
+            subplotLayout[`yaxis${index + 1}`] = { title: filteredData.metric };
+          });
+
+          Plotly.newPlot(subplotId, subplotData, subplotLayout).then(() => {
+            this.bindPlotEvents(subplotId, allFilteredData.length);
+          });
+        } else {
+          console.warn(`Element with ID ${subplotId} not found.`);
+        }
+      });
+    },
+
+    bindPlotEvents(subplotId, subplotCount) {
+      const plotElement = document.getElementById(subplotId);
+      plotElement.on('plotly_relayout', (eventData) => {
+        if (eventData['xaxis.range[0]'] && eventData['xaxis.range[1]']) {
+          for (let i = 1; i <= subplotCount; i++) {
+            Plotly.relayout(subplotId, {
+              [`xaxis${i}.range`]: [eventData['xaxis.range[0]'], eventData['xaxis.range[1]']]
+            });
+          }
+        }
       });
     },
 
@@ -91,54 +142,28 @@ export default {
       }, {});
     },
 
-    createPlot(metric, filteredData) {
-      this.$nextTick(() => {
-        const elementId = `chart-${metric}`;
-        if (document.getElementById(elementId)) {
-          const traces = this.createTraces(filteredData);
-          const layout = this.createLayout(metric);
-          Plotly.newPlot(elementId, traces, layout);
-
-          document.getElementById(elementId).on('plotly_relayout', (eventData) => {
-            this.onPlotInteraction(metric, eventData);
-          });
-
-          document.getElementById(elementId).on('plotly_doubleclick', () => {
-            this.onPlotReset();
-          });
-
-        } else {
-          console.warn(`Element with ID ${elementId} not found.`);
-        }
-      });
-    },
-
-    onPlotInteraction(changedMetric, eventData) {
-      if (!eventData['xaxis.range[0]'] || !eventData['xaxis.range[1]']) {
-        return;
+    generateRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
       }
+      return color;
+    },
 
-      this.selectedFeatures.forEach(metric => {
-        if (metric !== changedMetric) {
-          const elementId = `chart-${metric}`;
-          Plotly.relayout(elementId, {
-            'xaxis.range': [eventData['xaxis.range[0]'], eventData['xaxis.range[1]']]
-          });
+    assignColorsToSymbols() {
+      this.selectedStocks.forEach(symbol => {
+        if (!this.colorMapping[symbol]) {
+          let color;
+          do {
+            color = this.generateRandomColor();
+          } while (Object.values(this.colorMapping).includes(color));
+          this.colorMapping[symbol] = color;
         }
-      });
-      },
-
-    onPlotReset() {
-      this.selectedFeatures.forEach(metric => {
-        const elementId = `chart-${metric}`;
-        Plotly.relayout(elementId, {
-          'xaxis.autorange': true,
-          'yaxis.autorange': true
-        });
       });
     },
 
-    createTraces(filteredData) {
+    createTraces(filteredData, includeInLegend) {
       return Object.entries(filteredData).map(([symbol, data]) => {
         const sortedData = this.sortStockData(data);
         return {
@@ -146,24 +171,19 @@ export default {
           y: sortedData.map(d => d.metric),
           type: 'scatter',
           mode: 'lines',
-          name: symbol
+          name: symbol,
+          line: { color: this.colorMapping[symbol] },
+          showlegend: includeInLegend // Only show in legend for the first metric
         };
       });
     },
+
 
     sortStockData(data) {
       return data.dates
           .map((date, index) => ({ date: new Date(date), metric: data.metrics[index] }))
           .sort((a, b) => a.date - b.date)
           .map(d => ({ date: d.date.toISOString().substring(0, 10), metric: d.metric }));
-    },
-
-    createLayout(metric) {
-      return {
-        title: `Stock ${metric} over Time`,
-        xaxis: { title: 'Time' },
-        yaxis: { title: metric }
-      };
     }
   }
 }
@@ -178,13 +198,9 @@ export default {
 }
 
 .multi-metric-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  height: 45vh;
-  overflow-y: auto;
-}
-
-.metric-chart {
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 </style>
+
