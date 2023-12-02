@@ -2,50 +2,50 @@
   <v-btn v-if="checkedStocks.length > 0" class="reset-selection-button" @click="resetSelection">Reset Selection</v-btn>
   <!-- Selected Stocks Table -->
   <div class="combined-container">
-  <div class="scrollable-table-container" v-if="selectedStocks.length > 0">
-    <table>
-      <thead>
-      <tr>
-        <th></th>
-        <th v-for="key in stockDataKeys" :key="key">{{ key }}</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="(stock, index) in selectedStocks" :key="index">
-        <td>
-          <input type="checkbox"
-                :value="stock.symbol"
-                v-model="checkedStocks"
-                true-value="checked"
-                false-value="unchecked">
-        </td>
-        <td v-for="(value, key) in stock" :key="key">{{ isNumeric(value) ? formatNumber(value) : value }}</td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-  <!-- All Stocks Table -->
-  <div class="scrollable-table-container">
-    <table>
-      <thead>
-      <tr>
-        <th></th>
-        <th v-for="key in stockDataKeys" :key="key">{{ key }}</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="(stock, index) in filteredData" :key="index">
-        <td>
-          <input type="checkbox"
-                :value="stock.symbol"
-                v-model="checkedStocks"
-                true-value="checked"
-                false-value="unchecked">
-        </td>
-        <td v-for="(value, key) in stock" :key="key">{{ isNumeric(value) ? formatNumber(value) : value }}</td>
-      </tr>
-      </tbody>
-    </table>
+    <div v-if="selectedStocks.length > 0" class="scrollable-table-container">
+      <table>
+        <thead>
+        <tr>
+          <th></th>
+          <th v-for="key in stockDataKeys" :key="key">{{ key }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(stock, index) in selectedStocks" :key="index">
+          <td>
+            <input v-model="checkedStocks"
+                   :value="stock.symbol"
+                   false-value="unchecked"
+                   true-value="checked"
+                   type="checkbox">
+          </td>
+          <td v-for="(value, key) in stock" :key="key">{{ isNumeric(value) ? formatNumber(value) : value }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- All Stocks Table -->
+    <div class="scrollable-table-container">
+      <table>
+        <thead>
+        <tr>
+          <th></th>
+          <th v-for="key in stockDataKeys" :key="key">{{ key }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(stock, index) in filteredData" :key="index">
+          <td>
+            <input v-model="checkedStocks"
+                   :value="stock.symbol"
+                   false-value="unchecked"
+                   true-value="checked"
+                   type="checkbox">
+          </td>
+          <td v-for="(value, key) in stock" :key="key">{{ isNumeric(value) ? formatNumber(value) : value }}</td>
+        </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -92,27 +92,30 @@ export default {
       return this.formatLargeNumber(num)
     },
 
-  roundToThreeDecimals(num) {
-    return Math.round(num * 1000) / 1000;
-  },
+    roundToThreeDecimals(num) {
+      return Math.round(num * 1000) / 1000;
+    },
 
     formatLargeNumber(num) {
-      if (num >= 1e9) {
-        return `${(num / 1e9).toFixed(3)}B`;
-      } else if (num >= 1e6) {
-        return `${(num / 1e6).toFixed(0)}Mio`;
+      let absNum = Math.abs(num);
+      let sign = num >= 0 ? '' : '-';
+
+      if (absNum >= 1e9) {
+        return `${sign}${(absNum / 1e9).toFixed(3)}B`;
+      } else if (absNum >= 1e6) {
+        return `${sign}${(absNum / 1e6).toFixed(3)}M`;
       }
-      return num;
+      return `${sign}${num}`;
     },
 
     isNumeric(value) {
       return !isNaN(value) && isFinite(value);
     },
 
-  resetSelection() {
-    this.selectedStocks = []
-    this.checkedStocks = []
-  },
+    resetSelection() {
+      this.selectedStocks = []
+      this.checkedStocks = []
+    },
   }
 };
 </script>
