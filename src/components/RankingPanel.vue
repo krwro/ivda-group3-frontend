@@ -32,7 +32,7 @@
         ></v-slider>
       <div v-for="feature in features" :key="feature">
         <v-row>
-          <v-checkbox v-model="featureStates[feature]" :label="feature" @change="rankStocks"></v-checkbox>
+          <v-checkbox v-model="featureStates[feature]" :label="featureLabels[feature]" @change="rankStocks"></v-checkbox>
         </v-row>
         <v-slider
             v-if="featureStates[feature]"
@@ -73,6 +73,7 @@ export default {
       features: ['price', 'revenue'],
       featureStates: {'price':true, 'revenue':true},
       featureValues: {'price':50, 'revenue':100},
+      featureLabels: {},
       tickLabels: {
         0: 'Not Important',
         25: '',
@@ -109,6 +110,7 @@ export default {
           .then(data => {
             this.features = data.features;
             this.initializeFeatureStates();
+            this.initializeFeatureLabels();
           })
           .catch(error => {
             console.error('Error fetching features:', error);
@@ -131,6 +133,67 @@ export default {
         this.featureStates[feature] = false;
         this.featureValues[feature] = 0;
       });
+    },
+    initializeFeatureLabels() {
+      this.features.forEach(feature => {
+        this.featureLabels[feature] = this.humanReadableFeatureName(feature);
+      });
+    },
+    humanReadableFeatureName(feature) {
+      // Mapping feature codes to human-readable names.
+      const names = {
+        'price': 'Stock Price',
+        'F1_price': 'Stock Price Growth',
+        'F2_price': 'Stock Price Momentum',
+
+        'grossProfitMargin': 'Gross Profit Margin',
+        'eps': 'Earnings Per Share',
+        'dividendYield': 'Dividend Yield',
+        'grahamNumber': 'Graham Number',
+        'cashFlowToDebtRatio': 'Cash Flow to Debt Ratio',
+        'operatingCashFlowPerShare': 'Operating Cash Flow Per Share',
+        'returnOnAssets': 'Return on Assets',
+        'roe': 'Return on Equity',
+        'debtRatio': 'Debt Ratio',
+        'debtEquityRatio': 'Debt to Equity Ratio',
+
+        'revenue': 'Revenue',
+        'F1_revenue': 'Revenue Growth',
+        'F2_revenue': 'Revenue Momentum',
+
+        'netIncome': 'Net Income',
+        'F1_netIncome': 'Net Income Growth',
+        'F2_netIncome': 'Net Income Momentum',
+
+        'grossProfit': 'Gross Profit',
+        'F1_grossProfit': 'Gross Profit Growth',
+        'F2_grossProfit': 'Gross Profit Momentum',
+
+        'interestCoverage': 'Interest Coverage',
+        'F1_interestCoverage': 'Interest Coverage Growth',
+        'F2_interestCoverage': 'Interest Coverage Momentum',
+
+        'operatingIncome': 'Operating Income',
+        'F1_operatingIncome': 'Operating Income Growth',
+        'F2_operatingIncome': 'Operating Income Momentum',
+
+        'bookValuePerShare': 'Book Value Per Share',
+        'F1_bookValuePerShare': 'Book Value Per Share Growth',
+        'F2_bookValuePerShare': 'Book Value Per Share Momentum',
+
+        'tangibleAssetValue': 'Tangible Asset Value',
+        'F1_tangibleAssetValue': 'Tangible Asset Value Growth',
+        'F2_tangibleAssetValue': 'Tangible Asset Value Momentum',
+
+        'workingCapital': 'Working Capital',
+        'F1_workingCapital': 'Working Capital Growth',
+        'F2_workingCapital': 'Working Capital Momentum',
+
+        'priceToSalesRatio': 'Price to Sales Ratio',
+        'F1_priceToSalesRatio': 'Price to Sales Ratio Growth',
+        'F2_priceToSalesRatio': 'Price to Sales Ratio Momentum'
+      };
+      return names[feature] || feature;
     },
     emitDateRange() {
       this.rankStocks()
