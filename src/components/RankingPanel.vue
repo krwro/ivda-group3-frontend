@@ -3,33 +3,33 @@
     <h1>Feature Ranking Panel</h1>
     <p>First choose the features you want to include in your Ranking. Then choose their ranking weights based on their
       importance</p>
+    <v-range-slider
+        v-model="dateRange"
+        :max="maxDate"
+        :min="minDate"
+        :step="1"
+        label="Year"
+        thumb-label="always"
+        @end="emitDateRange"
+    ></v-range-slider>
+    <v-select
+        v-model="decayFunction"
+        :items="decayFunctions"
+        label="Decay Function Type"
+        @update:modelValue="rankStocks"
+    ></v-select>
+    <v-slider
+        v-if="decayFunction !== 'none'"
+        v-model="decayRate"
+        :max="100"
+        :min="0"
+        :step="1"
+        label="Decay Rate"
+        thumb-label="always"
+        tick-size="4"
+        @end="rankStocks"
+    ></v-slider>
     <div class="scrollable-section">
-      <v-range-slider
-          v-model="dateRange"
-          :max="maxDate"
-          :min="minDate"
-          :step="1"
-          label="Year"
-          thumb-label="always"
-          @end="emitDateRange"
-      ></v-range-slider>
-        <v-select
-            v-model="decayFunction"
-            :items="decayFunctions"
-            label="Decay Function Type"
-            @update:modelValue="rankStocks"
-        ></v-select>
-        <v-slider
-            v-if="decayFunction !== 'none'"
-            v-model="decayRate"
-            :max="100"
-            :min="0"
-            :step="1"
-            label="Decay Rate"
-            thumb-label="always"
-            tick-size="4"
-            @end="rankStocks"
-        ></v-slider>
       <div v-for="feature in features" :key="feature">
         <v-row>
           <v-checkbox v-model="featureStates[feature]" :label="featureLabels[feature]" @change="rankStocks"></v-checkbox>
@@ -66,7 +66,7 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="infoDialog" :persistent="true" max-width="600px">
+    <v-dialog v-model="infoDialog" max-width="600px">
       <v-card>
         <v-card-title>{{ currentFeatureLabel }}</v-card-title>
         <v-card-text v-html="currentFeatureInfo"></v-card-text>
@@ -330,6 +330,11 @@ export default {
 </script>
 
 <style scoped>
+.info-icon {
+  padding: 28px;
+  cursor: pointer;
+}
+
 .feature-ranking-panel {
   display: flex;
   flex-direction: column;
@@ -342,8 +347,7 @@ export default {
 .scrollable-section {
   overflow-y: auto;
   flex-grow: 1;
-  margin-top: 20px;
-  padding: 40px 20px 20px;
+  padding: 20px;
 }
 
 .loading-dialog {
