@@ -52,6 +52,7 @@
 
 <script>
 export default {
+  emits: ['update-selected-stocks'],
   props: {
     data: Array
   },

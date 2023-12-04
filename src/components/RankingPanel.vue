@@ -49,7 +49,7 @@
       </div>
     </div>
 
-    <v-dialog v-model="isLoading" persistent="true" width="300">
+    <v-dialog v-model="isLoading" :persistent="true" width="300">
       <v-card class="loading-dialog">
         <v-card-title class="headline">Loading...</v-card-title>
         <v-card-text class="text-center">
@@ -128,8 +128,8 @@ export default {
     },
     initializeFeatureStates() {
       this.features.forEach(feature => {
-        this.$set(this.featureStates, feature, false);
-        this.$set(this.featureValues, feature, 0);
+        this.featureStates[feature] = false;
+        this.featureValues[feature] = 0;
       });
     },
     emitDateRange() {

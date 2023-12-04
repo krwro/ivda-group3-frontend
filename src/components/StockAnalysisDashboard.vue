@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container fluid="true">
+    <v-container :fluid="true">
       <v-row>
         <v-col cols="12" md="3">
           <RankingPanel @ranking-complete="updateRankedStocks" @date-range-updated="updateDateRange" @selected-features="updateSelectedFeatures"/>
