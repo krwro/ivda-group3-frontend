@@ -44,6 +44,10 @@
           <ScatterMatrix :rankingData="rankedStocks" :selectedStocks="selectedStocks"></ScatterMatrix>
           <StockTimeSeriesPlots :selectedStocks="selectedStocks" :date-range="dateRange" :selectedFeatures="selectedFeatures"/>
         </v-col>
+<!--        TODO: Add a place where this makes sense. Maybe Discover/Explore view?-->
+        <v-col cols="12">
+          <HistogramGrid :startDate="dateRange[0]" :endDate="dateRange[1]"/>
+        </v-col>
       </v-row>
     </v-container>
   </div>
@@ -54,9 +58,10 @@ import StockTable from "@/components/StockTable.vue";
 import RankingPanel from "@/components/RankingPanel.vue";
 import StockTimeSeriesPlots from "@/components/StockTimeSeriesPlots.vue";
 import ScatterMatrix from "@/components/ScatterMatrix.vue";
+import HistogramGrid from "@/components/HistogramGrid.vue";
 
 export default {
-  components: {ScatterMatrix, StockTimeSeriesPlots, StockTable, RankingPanel },
+  components: {ScatterMatrix, StockTimeSeriesPlots, StockTable, RankingPanel, HistogramGrid},
   data() {
     return {
       dialog: false,
