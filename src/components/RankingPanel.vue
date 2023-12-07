@@ -29,6 +29,14 @@
         tick-size="4"
         @end="rankStocks"
     ></v-slider>
+    <v-select
+        v-model="selectedPreset"
+        :items="presets"
+        item-title="name"
+        item-value="values"
+        label="Select a Ranking Preset"
+        @update:modelValue="applyPreset"
+    ></v-select>
     <div class="scrollable-section">
       <div v-for="feature in features" :key="feature">
         <v-row>
@@ -112,6 +120,52 @@ export default {
       infoDialog: false,
       currentFeature: '',
       featureInfo: FeatureInfo,
+      selectedPreset: {
+        'price': 50, 'revenue': 50, 'netIncome': 50,
+        'grossProfit': 50, 'roe': 50, 'bookValuePerShare': 50,
+      },
+      presets: [
+        {
+          name: 'Growth-Oriented',
+          values: {
+            'F1_price': 75, 'F1_revenue': 75, 'F1_netIncome': 50,
+            'F1_grossProfit': 50, 'F1_bookValuePerShare': 50, 'F1_operatingIncome': 50,
+          },
+        },
+        {
+          name: 'Value-Oriented',
+          values: {
+            'priceToSalesRatio': 75, 'dividendYield': 75, 'cashFlowToDebtRatio': 50,
+            'grahamNumber': 50, 'roe': 50, 'debtEquityRatio': 50,
+          },
+        },
+        {
+          name: 'Momentum-Oriented',
+          values: {
+            'F2_price': 75, 'F2_revenue': 75, 'F2_netIncome': 50,
+            'F2_grossProfit': 50, 'F2_operatingIncome': 50, 'F2_bookValuePerShare': 50,
+          },
+        },
+        {
+          name: 'Stability-Oriented',
+          values: {
+            'eps': 75, 'grossProfitMargin': 75, 'returnOnAssets': 50,
+            'interestCoverage': 50, 'workingCapital': 50, 'operatingCashFlowPerShare': 50,
+          },
+        },
+        {
+          name: 'Balanced',
+          values: {
+            'price': 50, 'revenue': 50, 'netIncome': 50,
+            'grossProfit': 50, 'roe': 50, 'bookValuePerShare': 50,
+          },
+        },
+        {
+          name: 'Custom',
+          values: {
+          },
+        },
+      ],
     };
   },
   computed: {
@@ -125,7 +179,7 @@ export default {
   mounted() {
     this.fetchFeatures();
     this.fetchDateRange();
-    this.rankStocks();
+    this.applyPreset(this.selectedPreset);
   },
   watch: {
     featureStates: {
@@ -134,6 +188,26 @@ export default {
     }
   },
   methods: {
+    applyPreset() {
+      if (this.selectedPreset) {
+        // Reset all feature values and states to defaults
+        this.features.forEach(feature => {
+          this.featureValues[feature] = 0;
+          this.featureStates[feature] = false;
+        });
+
+        // Apply values from the selected preset
+        Object.entries(this.selectedPreset).forEach(([feature, value]) => {
+          this.featureValues[feature] = value;
+          this.featureStates[feature] = true;
+        });
+
+        if (Object.values(this.featureStates).every(value => value === false)) {
+          return;
+        }
+        this.rankStocks();
+      }
+    },
     fetchFeatures() {
       fetch('http://127.0.0.1:5000/stock-features')
           .then(response => response.json())
