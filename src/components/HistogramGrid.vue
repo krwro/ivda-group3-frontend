@@ -143,7 +143,7 @@ export default {
 <style scoped>
 #all-histograms {
   width: 100%;
-  height: 800px;
+  height: 80vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
