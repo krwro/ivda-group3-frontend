@@ -1,7 +1,6 @@
 <template>
-  <div class="info-card" v-if="selectedStocks.length === 0">Select a Stock to see more data</div>
   <div class="multi-metric-container" v-if="selectedStocks.length > 0">
-    <div v-for="metric in selectedFeatures" :key="metric" class="metric-chart">
+    <div v-for="metric in selectedFeatures" :key="metric" class="metric-chart" :style="{ height: subplotHeight + 'vh' }">
       <div id="multi-metric-subplot"></div>
     </div>
   </div>
@@ -38,6 +37,14 @@ export default {
   },
   mounted() {
     this.fetchStockData();
+  },
+  computed: {
+    plotHeight() {
+      const featureCount = this.selectedFeatures.length;
+      const evenFeatureCount = featureCount % 2 === 0 ? featureCount : featureCount + 1;
+      const viewHeight = 90
+      return evenFeatureCount > 0 ? viewHeight / evenFeatureCount : viewHeight;
+    },
   },
   methods: {
     async fetchStockData() {
@@ -93,11 +100,13 @@ export default {
         const subplotId = 'multi-metric-subplot';
         if (document.getElementById(subplotId)) {
           const subplotData = [];
+          const n_columns = 2
           const subplotLayout = {
-            grid: {rows: allFilteredData.length, columns: 1, pattern: 'independent'},
+            grid: {rows: allFilteredData.length, columns: n_columns, pattern: 'independent'},
             showlegend: true,
             legend: { x: 1, y: 1 },
-            margin: { l: 56, r: 16, t: 16, b: 16 }
+            margin: { l: 56, r: 16, t: 16, b: 16 },
+            height: window.innerHeight * (this.plotHeight / 100) * allFilteredData.length * n_columns
           };
 
           allFilteredData.forEach((filteredData, index) => {
