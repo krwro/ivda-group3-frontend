@@ -41,12 +41,28 @@
           <StockTable :data="rankedStocks" @update-selected-stocks="updateSelectedStocks"/>
         </v-col>
         <v-col cols="12" md="6">
-          <ScatterMatrix :rankingData="rankedStocks" :selectedStocks="selectedStocks"></ScatterMatrix>
-          <StockTimeSeriesPlots :selectedStocks="selectedStocks" :date-range="dateRange" :selectedFeatures="selectedFeatures"/>
-        </v-col>
-<!--        TODO: Add a place where this makes sense. Maybe Discover/Explore view?-->
-        <v-col cols="12">
-          <HistogramGrid :startDate="dateRange[0]" :endDate="dateRange[1]"/>
+          <v-tabs v-model="tab" background-color="transparent">
+            <v-tab value="timeSeries">Time Series</v-tab>
+            <v-tab value="histogram">Histogram</v-tab>
+            <v-tab value="scatterMatrix">Scatter Matrix</v-tab>
+          </v-tabs>
+
+          <v-card-text>
+            <v-window v-model="tab">
+              <v-window-item value="timeSeries">
+                <StockTimeSeriesPlots :selectedStocks="selectedStocks" :date-range="dateRange" :selectedFeatures="selectedFeatures"/>
+
+              </v-window-item>
+
+              <v-window-item value="histogram">
+                <HistogramGrid :startDate="dateRange[0]" :endDate="dateRange[1]"/>
+              </v-window-item>
+
+              <v-window-item value="scatterMatrix">
+                <ScatterMatrix :rankingData="rankedStocks" :selectedStocks="selectedStocks"/>
+              </v-window-item>
+            </v-window>
+          </v-card-text>
         </v-col>
       </v-row>
     </v-container>
@@ -70,7 +86,8 @@ export default {
       rankedStocks: [],
       selectedStocks: [],
       dateRange: [],
-      selectedFeatures: []
+      selectedFeatures: [],
+      tab: null,
     };
   },
   mounted() {
