@@ -101,8 +101,8 @@ export default {
         'grossProfit', 'roe', 'bookValuePerShare'],
       featureStates: {'price': true, 'revenue': true, 'netIncome': true,
         'grossProfit': true, 'roe': true, 'bookValuePerShare': true,},
-      featureValues: {'price': true, 'revenue': true, 'netIncome': true,
-        'grossProfit': true, 'roe': true, 'bookValuePerShare': true,},
+      featureValues: {'price': 50, 'revenue': 50, 'netIncome': 50,
+        'grossProfit': 50, 'roe': 50, 'bookValuePerShare': 50,},
       featureLabels: FeatureLabels,
       tickLabels: {
         0: 'Not Important',
@@ -238,24 +238,24 @@ export default {
             console.error('Error fetching features:', error);
           });
     },
-    initializeFeatureStates() {
-      this.features.forEach(feature => {
-        // Default value setting
-        this.featureStates[feature] = feature === 'price' || feature === 'revenue';
-      });
-    },
-    initializeFeatureValues() {
-      // Default value setting
-      this.features.forEach(feature => {
-        if (feature === 'price') {
-          this.featureValues[feature] = 50;
-        } else if (feature === 'revenue') {
-          this.featureValues[feature] = 100;
-        } else {
-          this.featureValues[feature] = 0;
-        }
-      });
-    },
+    // initializeFeatureStates() {
+    //   this.features.forEach(feature => {
+    //     // Default value setting
+    //     this.featureStates[feature] = feature === 'price' || feature === 'revenue';
+    //   });
+    // },
+    // initializeFeatureValues() {
+    //   // Default value setting
+    //   this.features.forEach(feature => {
+    //     if (feature === 'price') {
+    //       this.featureValues[feature] = 50;
+    //     } else if (feature === 'revenue') {
+    //       this.featureValues[feature] = 100;
+    //     } else {
+    //       this.featureValues[feature] = 0;
+    //     }
+    //   });
+    // },
     openFeatureInfo(feature) {
       this.currentFeature = feature;
       this.infoDialog = true;

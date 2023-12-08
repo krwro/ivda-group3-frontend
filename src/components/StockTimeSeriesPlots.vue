@@ -1,4 +1,7 @@
 <template>
+  <div class="info-card" v-if="selectedStocks.length === 0">
+    Select a stock to view more details
+  </div>
   <div class="multi-metric-container" v-if="selectedStocks.length > 0">
     <div v-for="metric in selectedFeatures" :key="metric" class="metric-chart" :style="{ height: subplotHeight + 'vh' }">
       <div id="multi-metric-subplot"></div>
