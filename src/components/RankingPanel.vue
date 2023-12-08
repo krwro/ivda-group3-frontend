@@ -97,9 +97,12 @@ export default {
       dateRange: [2010, 2022],
       minDate: null,
       maxDate: null,
-      features: ['price', 'revenue'],
-      featureStates: {'price':true, 'revenue':true},
-      featureValues: {'price':50, 'revenue':100},
+      features: ['price', 'revenue', 'netIncome',
+        'grossProfit', 'roe', 'bookValuePerShare'],
+      featureStates: {'price': true, 'revenue': true, 'netIncome': true,
+        'grossProfit': true, 'roe': true, 'bookValuePerShare': true,},
+      featureValues: {'price': true, 'revenue': true, 'netIncome': true,
+        'grossProfit': true, 'roe': true, 'bookValuePerShare': true,},
       featureLabels: FeatureLabels,
       tickLabels: {
         0: 'Not Important',
@@ -120,7 +123,13 @@ export default {
       infoDialog: false,
       currentFeature: '',
       featureInfo: FeatureInfo,
-      selectedPreset: "Custom",
+      selectedPreset: {
+        name: 'Balanced',
+        values: {
+          'price': 50, 'revenue': 50, 'netIncome': 50,
+          'grossProfit': 50, 'roe': 50, 'bookValuePerShare': 50,
+        },
+      },
       presets: [
         {
           name: 'Growth-Oriented',
@@ -176,7 +185,7 @@ export default {
   mounted() {
     this.fetchFeatures();
     this.fetchDateRange();
-    this.applyPreset(this.selectedPreset);
+    this.rankStocks();
   },
   watch: {
     featureStates: {
