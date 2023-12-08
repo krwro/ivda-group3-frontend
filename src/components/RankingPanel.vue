@@ -120,10 +120,7 @@ export default {
       infoDialog: false,
       currentFeature: '',
       featureInfo: FeatureInfo,
-      selectedPreset: {
-        'price': 50, 'revenue': 50, 'netIncome': 50,
-        'grossProfit': 50, 'roe': 50, 'bookValuePerShare': 50,
-      },
+      selectedPreset: "Custom",
       presets: [
         {
           name: 'Growth-Oriented',
