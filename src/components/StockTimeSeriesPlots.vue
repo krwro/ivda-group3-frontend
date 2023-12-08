@@ -1,9 +1,6 @@
 <template>
-  <div class="info-card" v-if="selectedStocks.length === 0">
-    Select a stock to view more details
-  </div>
-  <div class="multi-metric-container" v-if="selectedStocks.length > 0">
-    <div v-for="metric in selectedFeatures" :key="metric" class="metric-chart" :style="{ height: subplotHeight + 'vh' }">
+  <div class="multi-metric-container">
+    <div v-for="metric in selectedFeatures" :key="metric" class="metric-chart">
       <div id="multi-metric-subplot"></div>
     </div>
   </div>
@@ -202,12 +199,6 @@ export default {
 </script>
 
 <style scoped>
-.info-card{
-  text-align: center;
-  vertical-align: middle;
-  margin: 5vmin;
-  padding: 5vmin;
-}
 
 .multi-metric-container {
   display: flex;

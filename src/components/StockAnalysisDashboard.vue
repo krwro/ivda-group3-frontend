@@ -23,7 +23,7 @@
                   <ul>
                     <li><strong>Feature Selection:</strong> Selected financial metrics (features) are used in the score calculation. These might include metrics like revenue, profit margins, etc.</li>
                     <li><strong>Normalization:</strong> Each feature is normalized using Min-Max scaling to ensure a consistent range between 0 and 1. This step is crucial for comparing features on the same scale.</li>
-                    <li><strong>Weighting:</strong> Each normalized feature is multiplied by a predetermined weight. The weight reflects the relative importance of the feature in the overall score.</li>
+                    <li><strong>Weighting:</strong> Each normalized feature is multiplied by a predetermined weight (from 0 to 100 in 25 increments as displayed on the slider). The weight reflects the relative importance of the feature in the overall score.</li>
                     <li><strong>Decay Factor:</strong> A decay factor is applied to account for the timeliness of the data. More recent data is often more relevant, so older data is 'decayed' to reduce its impact. The decay can be linear, exponential, or logarithmic.</li>
                     <li><strong>Score Calculation:</strong> The final score for each stock is calculated by summing the weighted, decay-adjusted scores of each feature. Mathematically, it's represented as: <br/>
                       Score<sub>i</sub> = Σ<sub>f ∈ F</sub> (s<sub>i,f</sub> · w<sub>f</sub> · d<sub>i</sub>) <br/>
@@ -41,29 +41,18 @@
           <StockTable :data="rankedStocks" @update-selected-stocks="updateSelectedStocks"/>
         </v-col>
         <v-col cols="12" md="6">
-          <v-tabs v-model="tab" background-color="transparent">
-            <v-tab value="timeSeries">Time Series</v-tab>
-            <v-tab value="histogram">Histogram</v-tab>
-            <v-tab value="scatterMatrix">Scatter Matrix</v-tab>
-          </v-tabs>
+          <v-btn @click="setSelectedPlot('timeSeries')" :outlined="selectedPlot !== 'timeSeries'" :color="selectedPlot === 'timeSeries' ? 'primary' : ''">Time Series</v-btn>
+          <v-btn @click="setSelectedPlot('histogram')" :outlined="selectedPlot !== 'histogram'" :color="selectedPlot === 'histogram' ? 'primary' : ''">Histogram</v-btn>
+          <v-btn @click="setSelectedPlot('scatterMatrix')" :outlined="selectedPlot !== 'scatterMatrix'" :color="selectedPlot === 'scatterMatrix' ? 'primary' : ''">Scatter Matrix</v-btn>
 
-          <v-card-text>
-            <v-window v-model="tab">
-              <v-window-item value="timeSeries">
-                <StockTimeSeriesPlots :selectedStocks="selectedStocks" :date-range="dateRange" :selectedFeatures="selectedFeatures"/>
-
-              </v-window-item>
-
-              <v-window-item value="histogram">
-                <HistogramGrid :startDate="dateRange[0]" :endDate="dateRange[1]"/>
-              </v-window-item>
-
-              <v-window-item value="scatterMatrix">
-                <ScatterMatrix :rankingData="rankedStocks" :selectedStocks="selectedStocks"/>
-              </v-window-item>
-            </v-window>
-          </v-card-text>
+          <div v-show="selectedPlot === 'timeSeries'" v-if="selectedStocks.length === 0" class="no-stocks-message">
+            Please select stocks to view time series of selected metrics.
+          </div>
+          <StockTimeSeriesPlots v-show="selectedPlot === 'timeSeries'" :selectedStocks="selectedStocks" :date-range="dateRange" :selectedFeatures="selectedFeatures"/>
+          <HistogramGrid v-show="selectedPlot === 'histogram'" :startDate="dateRange[0]" :endDate="dateRange[1]"/>
+          <ScatterMatrix v-show="selectedPlot === 'scatterMatrix'" :rankingData="rankedStocks" :selectedStocks="selectedStocks"/>
         </v-col>
+
       </v-row>
     </v-container>
   </div>
@@ -87,7 +76,7 @@ export default {
       selectedStocks: [],
       dateRange: [],
       selectedFeatures: [],
-      tab: null,
+      selectedPlot: 'timeSeries'
     };
   },
   mounted() {
@@ -104,7 +93,9 @@ export default {
             console.error('Error fetching data:', error);
           });
     },
-
+    setSelectedPlot(plot) {
+      this.selectedPlot = plot;
+    },
     updateRankedStocks(response) {
       this.rankedStocks = JSON.parse(response.rankedStocks);
     },
@@ -129,5 +120,10 @@ export default {
   color: #1976d2;
   cursor: pointer;
   text-decoration: underline;
+}
+
+.no-stocks-message {
+  text-align: center;
+  margin: 64px;
 }
 </style>

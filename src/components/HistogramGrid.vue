@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-row>
-      <v-col cols="12" md="4">
-        <v-range-slider v-model="dateRange" :min="minYear" :max="maxYear" :step="1" label="Year Range" thumb-label="always" @end="fetchHistogramData" />
+    <v-row class="input-section">
+      <v-col cols="12" md="4" class="align-self-end">
+        <v-range-slider v-model="dateRange" :min="minYear" :max="maxYear" :step="1" label="Year Range" thumb-label="always" @end="fetchHistogramData"/>
       </v-col>
       <v-col cols="12" md="2">
         <v-text-field v-model="numBins" label="Number of Bins" type="number" min="1" @blur="fetchHistogramData" />
@@ -125,7 +125,8 @@ export default {
         height: numRows * 300,
         grid: { rows: numRows, columns: numCols, pattern: 'independent', row_heights: new Array(numRows).fill(100) },
         annotations: annotations,
-        showlegend: false
+        showlegend: false,
+        margin: { l: 10, r: 40, t: 10, b: 10 }
       };
 
       for (let i = 1; i <= Object.keys(this.histograms).length; i++) {
@@ -143,5 +144,11 @@ export default {
 #all-histograms {
   width: 100%;
   height: 800px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.input-section {
+  background-color: #f4f4f4;
+  padding: 8px;
 }
 </style>

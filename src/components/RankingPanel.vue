@@ -2,7 +2,7 @@
   <div class="feature-ranking-panel">
     <h1>Feature Ranking Panel</h1>
     <p>First choose the features you want to include in your Ranking. Then choose their ranking weights based on their
-      importance</p>
+      importance. To display features without including them in the ranking, select them and set their importance as "Not Important</p>
     <v-range-slider
         v-model="dateRange"
         :max="maxDate"
@@ -219,8 +219,6 @@ export default {
           .then(response => response.json())
           .then(data => {
             this.features = data.features;
-            this.initializeFeatureStates();
-            this.initializeFeatureValues();
           })
           .catch(error => {
             console.error('Error fetching features:', error);
@@ -238,24 +236,6 @@ export default {
             console.error('Error fetching features:', error);
           });
     },
-    // initializeFeatureStates() {
-    //   this.features.forEach(feature => {
-    //     // Default value setting
-    //     this.featureStates[feature] = feature === 'price' || feature === 'revenue';
-    //   });
-    // },
-    // initializeFeatureValues() {
-    //   // Default value setting
-    //   this.features.forEach(feature => {
-    //     if (feature === 'price') {
-    //       this.featureValues[feature] = 50;
-    //     } else if (feature === 'revenue') {
-    //       this.featureValues[feature] = 100;
-    //     } else {
-    //       this.featureValues[feature] = 0;
-    //     }
-    //   });
-    // },
     openFeatureInfo(feature) {
       this.currentFeature = feature;
       this.infoDialog = true;
