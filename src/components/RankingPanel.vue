@@ -1,17 +1,18 @@
 <template>
   <div class="feature-ranking-panel">
     <h1>Feature Ranking Panel</h1>
-    <p>First choose the features you want to include in your Ranking. Then choose their ranking weights based on their
-      importance. To display features without including them in the ranking, select them and set their importance as "Not Important</p>
+    <p>Start by selecting the features for your ranking. Assign a weight to each feature to indicate its importance. If you want to display a feature without including it in the ranking, mark it as "Not Important".</p>
+    <div class="year-range-slider">
     <v-range-slider
         v-model="dateRange"
         :max="maxDate"
         :min="minDate"
         :step="1"
-        label="Year"
+        label="Year Range"
         thumb-label="always"
         @end="emitDateRange"
     ></v-range-slider>
+    </div>
     <v-select
         v-model="decayFunction"
         :items="decayFunctions"
@@ -315,6 +316,10 @@ export default {
 
 .text-center {
   text-align: center;
+}
+
+.year-range-slider {
+  margin-top: 32px;
 }
 
 </style>
