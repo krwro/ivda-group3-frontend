@@ -108,12 +108,23 @@ export default {
       });
     },
     addTraceAndAnnotation(traces, annotations, histogramData, feature, index) {
+      // Generate a unique, fully saturated color for each histogram
+      let hue = index * (360 / Object.keys(this.histograms).length); // Distribute hues evenly across the color spectrum
+      let baseColor = `hsl(${hue}, 100%, 50%)`; // Full saturation and medium lightness for vivid colors
+
+      // Determine if any stocks are selected
+      let areStocksSelected = this.selectedStocks.length > 0;
+
       let binColors = histogramData.bin_edges.slice(0, -1).map((_, binIndex) => {
-        // Check if the current bin contains any of the selected stocks
-        let containsSelectedStock = this.selectedStocks.some(stock =>
-            histogramData.binned_symbols[binIndex] && histogramData.binned_symbols[binIndex].includes(stock)
-        );
-        return containsSelectedStock ? 'rgba(0, 123, 255, 1)' : 'rgba(0, 123, 255, 0.3)'; // Adjust colors as needed
+        if (areStocksSelected) {
+          // Check if the current bin contains any of the selected stocks
+          let containsSelectedStock = this.selectedStocks.some(stock =>
+              histogramData.binned_symbols[binIndex] && histogramData.binned_symbols[binIndex].includes(stock)
+          );
+          return containsSelectedStock ? baseColor : 'rgba(200, 200, 200, 1)'; // Use base color for selected stocks, grey for others
+        } else {
+          return baseColor; // Use the base color for all bins when no stocks are selected
+        }
       });
 
       traces.push({
