@@ -152,12 +152,10 @@ export default {
     },
 
     generateRandomColor() {
-      const letters = '0123456789ABCDEF';
-      let color = '#';
-      for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-      return color;
+      const h = Math.floor(Math.random() * 360);
+      const s = 80; // fixed high saturation for more vivid colors
+      const l = Math.floor(Math.random() * 20) + 30; // darker lightness values for better contrast on white
+      return `hsl(${h}, ${s}%, ${l}%)`;
     },
 
     assignColorsToSymbols() {
