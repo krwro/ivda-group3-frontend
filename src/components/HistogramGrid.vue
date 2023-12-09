@@ -32,7 +32,8 @@ export default {
   props: {
     startDate: String,
     endDate: String,
-    selectedStocks: Array
+    selectedStocks: Array,
+    selectedFeatures: Array
   },
 
   data() {
@@ -58,11 +59,15 @@ export default {
         }
       },
       deep: true // This ensures the watcher triggers even for changes within the array, not just the array reference
+    },
+    selectedFeatures(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.fetchHistogramData();
+      }
     }
   },
   mounted() {
     this.fetchDateRange();
-    this.fetchHistogramData();
   },
   methods: {
     fetchDateRange() {
@@ -76,12 +81,14 @@ export default {
           .catch(error => console.error('Error fetching date range:', error));
     },
     fetchHistogramData() {
+      console.log(this.selectedFeatures)
       const queryParams = new URLSearchParams({
         start_date: `${this.dateRange[0]}-01-01`,
         end_date: `${this.dateRange[1]}-12-31`,
         num_bins: this.numBins,
         remove_outliers: this.removeOutliers,
-        aggregation_method: this.aggregationMethod
+        aggregation_method: this.aggregationMethod,
+        numerical_features: this.selectedFeatures.join(',')
       });
 
       fetch(`http://127.0.0.1:5000/feature-distribution?${queryParams.toString()}`)
