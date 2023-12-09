@@ -6,6 +6,7 @@
           <RankingPanel @ranking-complete="updateRankedStocks" @date-range-updated="updateDateRange" @selected-features="updateSelectedFeatures"/>
         </v-col>
         <v-col cols="12" md="3">
+          <div class = "stock-ranking-section">
           <h1>Ranked Stocks</h1>
           <p>
             Here the ranked stocks are displayed alongside their average score and average financial metrics over the selected timeframe.
@@ -39,6 +40,7 @@
               </v-card>
             </v-dialog>
           <StockTable :data="rankedStocks" @update-selected-stocks="updateSelectedStocks"/>
+          </div>
         </v-col>
         <v-col cols="12" md="6">
           <v-btn @click="setSelectedPlot('timeSeries')" :outlined="selectedPlot !== 'timeSeries'" :color="selectedPlot === 'timeSeries' ? 'primary' : ''">Time Series</v-btn>
@@ -125,5 +127,14 @@ export default {
 .no-stocks-message {
   text-align: center;
   margin: 64px;
+}
+
+
+.stock-ranking-section {
+  display: flex;
+  flex-direction: column;
+  height: 95vh;
+  padding-top: 20px;
+  box-sizing: border-box;
 }
 </style>
