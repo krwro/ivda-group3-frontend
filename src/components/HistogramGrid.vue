@@ -108,9 +108,10 @@ export default {
       });
     },
     addTraceAndAnnotation(traces, annotations, histogramData, feature, index) {
-      // Generate a unique, fully saturated color for each histogram
       let hue = index * (360 / Object.keys(this.histograms).length); // Distribute hues evenly across the color spectrum
-      let baseColor = `hsl(${hue}, 100%, 50%)`; // Full saturation and medium lightness for vivid colors
+      let saturation = 70;
+      let lightness = 50;
+      let baseColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 
       // Determine if any stocks are selected
       let areStocksSelected = this.selectedStocks.length > 0;
