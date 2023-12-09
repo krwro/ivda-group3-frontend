@@ -48,7 +48,7 @@
           <div v-show="selectedPlot === 'timeSeries'" v-if="selectedStocks.length === 0" class="no-stocks-message">
             Please select stocks to view time series of selected metrics.
           </div>
-          <StockTimeSeriesPlots v-show="selectedPlot === 'timeSeries'" :selectedStocks="selectedStocks" :date-range="dateRange" :selectedFeatures="selectedFeatures"/>
+          <StockTimeSeriesPlots v-show="selectedPlot === 'timeSeries' && selectedStocks.length > 0" :selectedStocks="selectedStocks" :date-range="dateRange" :selectedFeatures="selectedFeatures"/>
           <HistogramGrid v-show="selectedPlot === 'histogram'" :startDate="dateRange[0]" :endDate="dateRange[1]" :selectedStocks="selectedStocks"/>
           <ScatterMatrix v-show="selectedPlot === 'scatterMatrix'" :rankingData="rankedStocks" :selectedStocks="selectedStocks"/>
         </v-col>
