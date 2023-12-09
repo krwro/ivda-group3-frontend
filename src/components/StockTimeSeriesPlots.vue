@@ -198,7 +198,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 
 .multi-metric-container {
   display: flex;

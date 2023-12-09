@@ -31,8 +31,10 @@ import Plotly from 'plotly.js/dist/plotly';
 export default {
   props: {
     startDate: String,
-    endDate: String
+    endDate: String,
+    selectedStocks: Array
   },
+
   data() {
     return {
       histograms: {},
@@ -48,7 +50,15 @@ export default {
   watch: {
     uniformYAxis: 'fetchHistogramData',
     removeOutliers: 'fetchHistogramData',
-    aggregationMethod: 'fetchHistogramData'
+    aggregationMethod: 'fetchHistogramData',
+    selectedStocks: {
+      handler(newVal, oldVal) {
+        if (newVal.length !== oldVal.length || !newVal.every((val, index) => val === oldVal[index])) {
+          this.plotHistograms(); // Re-draw the histograms
+        }
+      },
+      deep: true // This ensures the watcher triggers even for changes within the array, not just the array reference
+    }
   },
   mounted() {
     this.fetchDateRange();
@@ -98,11 +108,22 @@ export default {
       });
     },
     addTraceAndAnnotation(traces, annotations, histogramData, feature, index) {
+      let binColors = histogramData.bin_edges.slice(0, -1).map((_, binIndex) => {
+        // Check if the current bin contains any of the selected stocks
+        let containsSelectedStock = this.selectedStocks.some(stock =>
+            histogramData.binned_symbols[binIndex] && histogramData.binned_symbols[binIndex].includes(stock)
+        );
+        return containsSelectedStock ? 'rgba(0, 123, 255, 1)' : 'rgba(0, 123, 255, 0.3)'; // Adjust colors as needed
+      });
+
       traces.push({
         x: histogramData.bin_edges.slice(0, -1),
         y: histogramData.hist,
         type: 'bar',
         name: feature,
+        marker: {
+          color: binColors
+        },
         xaxis: `x${index + 1}`,
         yaxis: `y${index + 1}`
       });
@@ -142,7 +163,7 @@ export default {
 
 <style scoped>
 #all-histograms {
-  width: 100%;
+  width: 50vw;
   height: 80vh;
   overflow-y: auto;
   overflow-x: hidden;

@@ -49,7 +49,7 @@
             Please select stocks to view time series of selected metrics.
           </div>
           <StockTimeSeriesPlots v-show="selectedPlot === 'timeSeries'" :selectedStocks="selectedStocks" :date-range="dateRange" :selectedFeatures="selectedFeatures"/>
-          <HistogramGrid v-show="selectedPlot === 'histogram'" :startDate="dateRange[0]" :endDate="dateRange[1]"/>
+          <HistogramGrid v-show="selectedPlot === 'histogram'" :startDate="dateRange[0]" :endDate="dateRange[1]" :selectedStocks="selectedStocks"/>
           <ScatterMatrix v-show="selectedPlot === 'scatterMatrix'" :rankingData="rankedStocks" :selectedStocks="selectedStocks"/>
         </v-col>
 
