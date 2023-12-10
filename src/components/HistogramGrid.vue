@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="hist-container">
     <v-row class="input-section">
       <v-col cols="12" md="4" class="align-self-end">
         <v-range-slider v-model="dateRange" :min="minYear" :max="maxYear" :step="1" label="Year Range" thumb-label="always" @end="fetchHistogramData"/>
@@ -17,8 +17,8 @@
         <v-select v-model="aggregationMethod" :items="['mean', 'median']" label="Aggregation Method" />
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12">
+    <v-row class="plot-container">
+      <v-col cols="12" class="plots">
         <div id="all-histograms"></div>
       </v-col>
     </v-row>
@@ -166,7 +166,7 @@ export default {
         grid: { rows: numRows, columns: numCols, pattern: 'independent', row_heights: new Array(numRows).fill(100) },
         annotations: annotations,
         showlegend: false,
-        margin: { l: 10, r: 40, t: 10, b: 10 }
+        margin: { l: 30, r: 20, t: 50, b: 20 }
       };
 
       for (let i = 1; i <= Object.keys(this.histograms).length; i++) {
@@ -182,13 +182,31 @@ export default {
 
 <style scoped>
 #all-histograms {
-  width: 50vw;
-  height: 80vh;
+  height: 82vh;
+  width: 47.5vw;
   overflow-y: auto;
   overflow-x: hidden;
 }
 .input-section {
   background-color: #f4f4f4;
-  padding: 8px;
+  height: 8vh;
 }
+
+.hist-container {
+  height: 90vh;
+  width: 47.5vw;
+}
+
+.v-row {
+  margin: 0;
+}
+
+.plot-container{
+  height: 82vh;
+}
+
+.plots {
+  height: 82vh;
+}
+
 </style>

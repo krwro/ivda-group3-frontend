@@ -76,6 +76,6 @@ export default {
 <style>
 #scatterMatrix {
   height: 90vh;
-  width: 50vw;
+  width: 47.5vw;
 }
 </style>

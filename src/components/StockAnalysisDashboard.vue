@@ -133,7 +133,6 @@ export default {
   margin: 64px;
 }
 
-
 .stock-ranking-section {
   display: flex;
   flex-direction: column;

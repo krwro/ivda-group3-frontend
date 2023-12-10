@@ -201,8 +201,12 @@ export default {
 .multi-metric-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  width: 50vw;
+  height: 90vh;
+  width: 47.5vw;
 }
-</style>
 
+* {
+  max-height: 100vh;
+}
+
+</style>
