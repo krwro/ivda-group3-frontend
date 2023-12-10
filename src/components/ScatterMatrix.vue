@@ -115,6 +115,7 @@ export default {
 
     updateColorMap() {
       for (const [key, value] of Object.entries(this.colorMapping)) {
+        console.log(value)
         if(!this.selectedStocks.includes(key)){
           delete this.colorMapping[key]
         }
